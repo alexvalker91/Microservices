@@ -1,0 +1,77 @@
+version: '3.9'
+
+networks:
+  sender: {}
+  recipient: {}
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=app
+      - RABBITMQ_DEFAULT_PASS=app
+    networks:
+      - sender
+      - recipient
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  micro-sender:
+    build:
+      context: /workspace
+      dockerfile: microservices/micro-sender/Dockerfile
+    container_name: micro-sender
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=app
+      - SPRING_RABBITMQ_PASSWORD=app
+      - SERVER_PORT=8081
+    ports:
+      - "8081:8081"
+    networks:
+      - sender
+
+  micro-recipient:
+    build:
+      context: /workspace
+      dockerfile: microservices/micro-recipient/Dockerfile
+    container_name: micro-recipient
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=app
+      - SPRING_RABBITMQ_PASSWORD=app
+      - RECIPIENT_POLL_INTERVAL_MS=5000
+      - SERVER_PORT=8082
+    ports:
+      - "8082:8082"
+    networks:
+      - recipient
+
+  micro-collector:
+    build:
+      context: /workspace
+      dockerfile: microservices/micro-collector/Dockerfile
+    container_name: micro-collector
+    depends_on:
+      - micro-recipient
+    environment:
+      - RECIPIENT_BASE_URL=http://micro-recipient:8082
+      - COLLECTOR_FETCH_INTERVAL_MS=10000
+      - SERVER_PORT=8083
+    ports:
+      - "8083:8083"
+    networks:
+      - recipient
