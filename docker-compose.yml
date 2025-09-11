@@ -1,0 +1,106 @@
+version: "3.9"
+
+networks:
+  sender: {}
+  recipient: {}
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=app
+      - RABBITMQ_DEFAULT_PASS=app
+    networks:
+      - sender
+      - recipient
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  micro-sender:
+    build:
+      context: .
+      dockerfile: microservices/micro-sender/Dockerfile
+    container_name: micro-sender
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=app
+      - SPRING_RABBITMQ_PASSWORD=app
+      - SERVER_PORT=8081
+    ports:
+      - "8081:8081"
+    networks:
+      - sender
+
+  micro-recipient:
+    build:
+      context: .
+      dockerfile: microservices/micro-recipient/Dockerfile
+    container_name: micro-recipient
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=app
+      - SPRING_RABBITMQ_PASSWORD=app
+      - RECIPIENT_POLL_INTERVAL_MS=5000
+      - SERVER_PORT=8082
+    ports:
+      - "8082:8082"
+    networks:
+      - recipient
+
+  micro-collector:
+    build:
+      context: .
+      dockerfile: microservices/micro-collector/Dockerfile
+    container_name: micro-collector
+    depends_on:
+      - micro-recipient
+    environment:
+      - RECIPIENT_BASE_URL=http://micro-recipient:8082
+      - COLLECTOR_FETCH_INTERVAL_MS=10000
+      - SERVER_PORT=8083
+    ports:
+      - "8083:8083"
+    networks:
+      - recipient
+      
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks:
+      - sender
+      - recipient
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - sender
+      - recipient

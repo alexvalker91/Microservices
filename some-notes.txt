@@ -1,0 +1,24 @@
+1) запускаем "docker-compose up --build" на уровне docker-compose.yml файла
+2) отправляем POST http://localhost:8081/notification
+{
+    "user": "test_user",
+    "message": "test_message13sdsfsdfsdfsdasd2"
+}
+
+   ловим GET http://localhost:8082/message
+
+3) RabbitMQ http://localhost:15672/ , log: app password: app
+   http://localhost:5672/ 
+   
+4) Grafana http://localhost:3000/ , log: admin password: admin
+5) Prometeus http://localhost:9090/
+             http://localhost:9090/targets
+			 
+6) Docker yaml, microservices содержит:
+    1) rabbitmq
+	2) prometheus
+	3) micro-recipient
+	4) grafana
+	5) micro-sender
+	6) micro-collector
+----------------------------

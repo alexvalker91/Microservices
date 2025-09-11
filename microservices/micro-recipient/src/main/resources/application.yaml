@@ -1,0 +1,25 @@
+server:
+  port: 8082
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: app
+    password: app
+recipient:
+  poll-interval-ms: 5000
+logging:
+  level:
+    root: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,prometheus"
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: micro-recipient
