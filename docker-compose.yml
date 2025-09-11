@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 networks:
   sender: {}
@@ -25,7 +25,7 @@ services:
 
   micro-sender:
     build:
-      context: /workspace
+      context: .
       dockerfile: microservices/micro-sender/Dockerfile
     container_name: micro-sender
     depends_on:
@@ -43,7 +43,7 @@ services:
 
   micro-recipient:
     build:
-      context: /workspace
+      context: .
       dockerfile: microservices/micro-recipient/Dockerfile
     container_name: micro-recipient
     depends_on:
@@ -62,7 +62,7 @@ services:
 
   micro-collector:
     build:
-      context: /workspace
+      context: .
       dockerfile: microservices/micro-collector/Dockerfile
     container_name: micro-collector
     depends_on:
