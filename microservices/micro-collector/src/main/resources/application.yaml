@@ -1,0 +1,12 @@
+server:
+  port: 8083
+
+recipient:
+  base-url: http://localhost:8082
+
+collector:
+  fetch-interval-ms: 10000
+
+logging:
+  level:
+    root: INFO
