@@ -33,7 +33,7 @@ public class MessageCollectorService {
 
     @Scheduled(fixedDelayString = "${recipient.poll-interval-ms:5000}")
     public void pollQueue() {
-        log.info("Polling RabbitMQ for messages...");
+        log.info("Polling RabbitMQ for messages");
         while (true) {
             Object msg = rabbitTemplate.receiveAndConvert(RabbitConfig.NOTIFICATIONS_QUEUE);
             if (msg == null) {

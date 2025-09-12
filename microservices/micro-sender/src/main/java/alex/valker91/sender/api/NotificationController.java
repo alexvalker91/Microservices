@@ -28,9 +28,9 @@ public class NotificationController {
         if (request == null || request.getMessage() == null) {
             return ResponseEntity.badRequest().build();
         }
-        log.info("Received notification from user='{}'", request.getUser());
+        log.info("Received notification from user='" + request.getUser() + "'");
         rabbitTemplate.convertAndSend(RabbitConfig.NOTIFICATIONS_QUEUE, request.getMessage());
-        log.info("Published message to queue '{}': {}", RabbitConfig.NOTIFICATIONS_QUEUE, request.getMessage());
+        log.info("Published message to queue '" + RabbitConfig.NOTIFICATIONS_QUEUE + "': " + request.getMessage());
         return ResponseEntity.accepted().build();
     }
 }

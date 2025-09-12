@@ -26,7 +26,7 @@ public class MessageController {
     public ResponseEntity<List<String>> getAndClear() {
         log.info("GET /message called");
         List<String> messages = collectorService.drainMessages();
-        log.info("Returning {} messages and clearing buffer", messages.size());
+        log.info("Returning " + messages.size() + " messages and clearing buffer");
         return ResponseEntity.ok(messages);
     }
 }

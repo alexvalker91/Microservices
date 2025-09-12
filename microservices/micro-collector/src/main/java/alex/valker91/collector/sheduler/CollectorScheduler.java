@@ -21,12 +21,12 @@ public class CollectorScheduler {
 
     @Scheduled(fixedDelayString = "${collector.fetch-interval-ms:10000}")
     public void fetchAndLog() {
-        log.info("Collector scheduler triggered - fetching messages from recipient...");
+        log.info("Collector scheduler triggered - retrieving messages from recipient");
         try {
             List<String> messages = recipientClient.fetchMessages();
-            log.info("Fetched {} messages: {}", messages == null ? 0 : messages.size(), messages);
+            log.info("Fetched " + (messages == null ? 0 : messages.size()) + " messages: " + messages);
         } catch (Exception e) {
-            log.warn("Failed to fetch messages from recipient: {}", e.getMessage());
+            log.warn("Failed to fetch messages from recipient: " + e.getMessage());
         }
     }
 }

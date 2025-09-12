@@ -43,15 +43,15 @@ public class RecipientMetrics {
 
     @Scheduled(fixedDelayString = "${recipient.poll-interval-ms:5000}")
     public void updateRandomMetrics() {
-        int nextDepth = random.nextInt(101); // 0..100
+        int nextDepth = random.nextInt(101); // 0 - 100
         randomQueueDepth.set(nextDepth);
 
-        int increments = 1 + random.nextInt(5); // 1..5
+        int increments = 1 + random.nextInt(5); // 1 - 5
         for (int i = 0; i < increments; i++) {
             dummyProcessedCounter.increment();
         }
 
-        long simulatedMs = 50L + random.nextInt(200); // 50..249ms
+        long simulatedMs = 50L + random.nextInt(200); // 50 - 249
         processingTimer.record(simulatedMs, TimeUnit.MILLISECONDS);
     }
 }
