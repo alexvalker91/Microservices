@@ -45,6 +45,13 @@
                 <configuration>
                     <mainClass>alex.valker91.MicroSenderApplication</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
