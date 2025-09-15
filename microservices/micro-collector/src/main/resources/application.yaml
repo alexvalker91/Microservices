@@ -19,3 +19,15 @@ management:
   metrics:
     tags:
       application: micro-collector
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: postgresql://localhost:5432/appdb
+    username: app
+    password: app
