@@ -1,0 +1,43 @@
+// Проверка
+~ kubectl cluster-info
+~ cd /k8s
+// Запускаем
+~ kubectl apply -f deployment.yaml
+// Узнаем статус Deployment
+~ kubectl get deployments -n microstack
+// Проверьте статус подов
+~ kubectl get pods -n microstack
+
+// Доступы к сервисам
+~ kubectl get services -n microstack
+PS C:\Users\AliaksandrKreyer\Desktop\my\repositories\Microservices\k8s> kubectl get services -n microstack
+NAME              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)              AGE
+grafana           ClusterIP   10.99.28.71      <none>        3000/TCP             8m19s
+micro-collector   ClusterIP   10.101.74.14     <none>        8083/TCP             8m19s
+micro-recipient   ClusterIP   10.109.70.212    <none>        8082/TCP             8m20s
+micro-sender      ClusterIP   10.110.230.99    <none>        8081/TCP             8m20s
+prometheus        ClusterIP   10.106.188.182   <none>        9090/TCP             8m19s
+rabbitmq          ClusterIP   10.109.221.191   <none>        5672/TCP,15672/TCP   8m20s
+
+//  временно перенаправить порт сервиса grafana из кластера на ваш локальный компьютер
+kubectl port-forward svc/grafana 3000:3000 -n microstack
+kubectl port-forward svc/micro-sender 8081:8081 -n microstack
+kubectl port-forward svc/micro-recipient 8082:8082 -n microstack
+kubectl port-forward svc/micro-collector 8083:8083 -n microstack
+
+// Удаление Deployment и всех связанных ресурсов
+~ kubectl delete -f deployment.yaml
+
+
+
+
+-------------------------------
+1) запустить 'docker ps' если не получается собрать 'micro-sender', 'micro-recipient', 'micro-collector'
+выполнить:
+~ docker commit micro-collector micro-collector:local
+вывод: sha256:c94e264ec324d7ef5277f1d8e3ff5679308843818fba5092d03c7bdd1688cc64
+проверить что новый образ собран 'docker images'
+
+~ docker commit micro-sender micro-sender:local
+~ docker commit micro-recipient micro-recipient:local
+-------------------------------

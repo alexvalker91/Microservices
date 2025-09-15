@@ -22,3 +22,13 @@
 	5) micro-sender
 	6) micro-collector
 ----------------------------
+
+1) запустить 'docker ps'
+выполнить:
+~ docker commit micro-collector micro-collector:local
+вывод: sha256:c94e264ec324d7ef5277f1d8e3ff5679308843818fba5092d03c7bdd1688cc64
+проверить что новый образ собран 'docker images'
+
+~ docker commit micro-sender micro-sender:local
+~ docker commit micro-recipient micro-recipient:local
+----------------------------
