@@ -99,6 +99,25 @@ services:
     networks:
       - recipient
       
+  micro-visualizer:
+    build:
+      context: .
+      dockerfile: microservices/micro-visualizer/Dockerfile
+    container_name: micro-visualizer
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - SERVER_PORT=8084
+      - SPRING_PROFILES_ACTIVE=compose
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/appdb
+      - SPRING_DATASOURCE_USERNAME=app
+      - SPRING_DATASOURCE_PASSWORD=app
+    ports:
+      - "8084:8084"
+    networks:
+      - recipient
+      
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
