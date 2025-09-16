@@ -22,6 +22,15 @@
 	5) micro-sender
 	6) micro-collector
 ----------------------------
+7) 'micro-visualizer'
+отправляем POST http://localhost:8081/notification
+{
+    "user": "test_user",
+    "message": "test_message13sdsfsdfsdfsdasd2"
+}
+Получаем от микро визуализер
+GET http://localhost:8084/saved-messages
+----------------------------
 
 1) запустить 'docker ps'
 выполнить:
